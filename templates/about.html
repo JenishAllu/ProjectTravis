@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>About - HERMES</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2f7, #cce9f5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .about-container {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      max-width: 700px;
+      margin: 40px 0 0 0;
+      padding: 40px 32px;
+      text-align: left;
+    }
+    h1 {
+      color: #4A90E2;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    h2 {
+      color: #2c3e50;
+      margin-top: 30px;
+    }
+    p, li {
+      color: #333;
+      font-size: 1.08em;
+      line-height: 1.7;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      background: #4A90E2;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(74,144,226,0.15);
+      transition: background 0.2s;
+    }
+    .back-link:hover {
+      background: #357ab8;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar" style="width:100vw;height:60px;background:linear-gradient(90deg,#181c24 60%,#232a34 100%);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 40px;box-sizing:border-box;box-shadow:0 2px 16px 0 #00e0ff55;position:fixed;top:0;left:0;z-index:100;animation:navFadeIn 1.2s cubic-bezier(.4,1.4,.6,1) 0.1s both;backdrop-filter:blur(6px);">
+    <div class="nav-title" style="font-size:2em;font-weight:700;letter-spacing:0.04em;color:#00e0ff;text-shadow:0 0 16px #00e0ff99,0 0 4px #fff2;display:flex;align-items:center;gap:12px;animation:fadeInLeft 1.2s cubic-bezier(.4,1.4,.6,1) 0.2s both;">HERMES</div>
+    <div class="nav-links" style="display:flex;gap:32px;align-items:center;">
+      <a class="nav-link" href="/about" style="color:#fff;text-decoration:none;font-size:1.1em;font-weight:500;padding:8px 18px;border-radius:8px;transition:background 0.2s,color 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 8px 2px #00e0ff44;">About</a>
+      <a class="nav-link" href="https://github.com/jenishallur/live-chat" target="_blank" style="color:#fff;text-decoration:none;font-size:1.1em;font-weight:500;padding:8px 18px;border-radius:8px;transition:background 0.2s,color 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 8px 2px #00e0ff44;">GitHub</a>
+    </div>
+  </nav>
+  <div style="height: 80px;"></div>
+  <div class="about-container">
+    <h1>About HERMES</h1>
+    <p><b>HERMES</b> (Hearing-Enabled Response and Multilingual Echo System) is an advanced, accessible, multilingual live chat platform designed to empower visually impaired users and support seamless communication for everyone. Developed by Team Travis G242, HERMES leverages state-of-the-art speech recognition and synthesis, AI-powered translation, and robust accessibility features to ensure that no one is left behind in digital conversations.</p>
+    <h2>What is HERMES?</h2>
+    <p>HERMES is your intelligent, voice-driven assistant for real-time, inclusive communication. Users can interact in English, Hindi, or Telugu—by typing or speaking—and receive instant responses, with all messages translated as needed. HERMES is built to be accessible for the visually impaired, offering high-contrast UI, full keyboard navigation, and screen reader compatibility. Speech-to-text and text-to-speech work in all supported languages, making chat accessible to everyone.</p>
+    <h2>How to Use</h2>
+    <ol>
+      <li><b>Register</b> as a customer or agent, selecting your preferred language (English, Hindi, Telugu).</li>
+      <li><b>Login</b> with your credentials.</li>
+      <li><b>Customers:</b> Start chatting with an agent or AI. Type or use the mic to send voice messages in your language.</li>
+      <li><b>Agents:</b> View all online customers, join chats, and reply using text or voice. All controls are accessible via keyboard and screen reader.</li>
+      <li>Messages are automatically translated and transcribed, with chat history securely stored for your convenience.</li>
+    </ol>
+    <h2>Key Features</h2>
+    <ul>
+      <li>Real-time chat between customers and agents using WebSockets (Socket.IO)</li>
+      <li>Multilingual support: automatic translation and speech recognition for English, Hindi, and Telugu</li>
+      <li>AI-powered intent classification and smart automated replies</li>
+      <li>Speech-to-text and text-to-speech for all supported languages</li>
+      <li>Screen reader and keyboard navigation for visually impaired users</li>
+      <li>Secure authentication and role-based access (customer/agent)</li>
+      <li>Persistent, searchable chat history with MongoDB</li>
+      <li>Modern, high-contrast, and responsive UI</li>
+      <li>Privacy-focused: no data shared with third parties</li>
+    </ul>
+    <h2>Keyboard Shortcuts</h2>
+    <ul>
+      <li><kbd>Alt+Space</kbd>: Hold to record (mic on while holding)</li>
+      <li><kbd>Alt+S</kbd>: Send message</li>
+      <li><kbd>Alt+A</kbd>: Open About page/modal</li>
+      <li><kbd>Alt+L</kbd>: Focus customer list and read first customer</li>
+      <li><kbd>Up/Down Arrow</kbd> (in customer list): Move selection and read customer name</li>
+      <li><kbd>Enter</kbd> (in customer list): Select highlighted customer</li>
+      <li><kbd>Esc</kbd>: Exit input or customer list navigation</li>
+      <li><kbd>Alt+C</kbd>: Read chat from bottom</li>
+      <li><kbd>Left/Right Arrow</kbd>: Navigate chat messages</li>
+    </ul>
+    <p><b>Accessibility:</b> HERMES is designed for everyone. All controls are keyboard-accessible, and both customers and agents can use screen readers. After voice transcription, the result is spoken aloud for visually impaired users. The interface is high-contrast, easy to navigate, and supports TTS and STT in multiple languages. HERMES is committed to digital inclusion and independence for all users.</p>
+    <h2>Team & Credits</h2>
+    <ul>
+      <li>Developed by Team Travis G242</li>
+      <li>GitHub: <a href="https://github.com/jenishallur/ProjectTravis" target="_blank">ProjectTravis</a></li>
+    </ul>
+    <h2>About the Name</h2>
+    <p>
+      <b>HERMES</b> – <i>Hearing-Enabled Response and Multilingual Echo System</i><br>
+      Hermes, the messenger of the gods in Greek mythology, symbolizes voice, communication, speed, guidance, and helping souls find their way. This makes HERMES the perfect name for a system that empowers visually impaired users to navigate digital conversations and tasks through speech and multilingual support.
+    </p>
+    <h2>Why Choose HERMES?</h2>
+    <ul>
+      <li>Empowers visually impaired users with seamless voice and text chat</li>
+      <li>Supports English, Hindi, and Telugu for both speech and text</li>
+      <li>Ensures privacy and security for all users</li>
+      <li>Open-source and community-driven</li>
+      <li>Continuously improved for accessibility and inclusion</li>
+    </ul>
+    <a href="/login" class="back-link" aria-label="Back to Login">Back to Login</a>
+  </div>
+  <footer style="width:100vw;text-align:center;padding:18px 0 12px 0;font-size:1.1em;color:#555;background:transparent;position:relative;bottom:0;">Powered by travis g424</footer>
+  </div>
+</body>
+</html>

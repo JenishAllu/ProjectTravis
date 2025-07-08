@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Chat</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .navbar {
+            width: 100vw;
+            height: 60px;
+            background: linear-gradient(90deg, #181c24 60%, #232a34 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 16px 0 #00e0ff55;
+            position: fixed;
+            top: 0; left: 0; z-index: 100;
+            animation: navFadeIn 1.2s cubic-bezier(.4,1.4,.6,1) 0.1s both;
+            backdrop-filter: blur(6px);
+        }
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-title {
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #00e0ff;
+            text-shadow: 0 0 16px #00e0ff99, 0 0 4px #fff2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: fadeInLeft 1.2s cubic-bezier(.4,1.4,.6,1) 0.2s both;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            padding: 8px 18px;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 0 8px 2px #00e0ff44;
+        }
+        .nav-link:hover {
+            background: #232a34;
+            color: #00e0ff;
+            box-shadow: 0 0 16px 2px #00e0ff99;
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .container {
+            margin-top: 80px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #181c24 60%, #232a34 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: linear-gradient(135deg, #232a34 60%, #181c24 100%);
+            border-radius: 22px;
+            box-shadow: 0 8px 40px #00e0ff55, 0 2px 12px #000a;
+            padding: 38px 38px 22px 38px;
+            backdrop-filter: blur(6px);
+            position: relative;
+        }
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 22px;
+            background: radial-gradient(circle at 20% 20%, #00e0ff33 0%, transparent 60%),
+                        radial-gradient(circle at 80% 80%, #00e0ff22 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        h2 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 2.1em;
+            letter-spacing: 0.03em;
+            text-shadow: 0 0 18px #00e0ff99, 0 0 4px #fff2;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+        .chat-controls {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            background: linear-gradient(90deg, #1a2230 60%, #232a34 100%);
+            border-radius: 12px;
+            box-shadow: 0 0 16px #00e0ff44, 0 1.5px 8px #00e0ff11;
+            padding: 12px 18px;
+            position: relative;
+            z-index: 1;
+        }
+        .chat-controls label {
+            font-weight: 600;
+            color: #00e0ff;
+            text-shadow: 0 0 8px #00e0ff99;
+        }
+        #chat_mode {
+            padding: 8px 14px;
+            border: 1.5px solid #00e0ff;
+            border-radius: 8px;
+            font-size: 1.08em;
+            background: #181c24;
+            color: #00e0ff;
+            box-shadow: 0 0 8px #00e0ff33;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            max-width: 140px;
+        }
+        #chat_mode:focus {
+            border: 2px solid #00e0ff;
+            box-shadow: 0 0 16px #00e0ff99;
+        }
+        #chat {
+            border: 2.5px solid #00e0ff;
+            height: 520px;
+            max-height: 60vh;
+            min-height: 340px;
+            overflow-y: auto;
+            margin-bottom: 18px;
+            padding: 18px 18px 12px 18px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #232a34 60%, #181c24 100%);
+            box-shadow: 0 8px 32px 0 #00e0ff44, 0 2px 12px #00e0ff22;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s, border 0.2s;
+            position: relative;
+            backdrop-filter: blur(8px);
+        }
+        #chat::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            opacity: 0.18;
+            background: url('https://cdn.pixabay.com/photo/2017/01/31/13/14/ai-2025789_1280.png') left 18% top 18%/120px 120px no-repeat,
+                        url('https://cdn.pixabay.com/photo/2016/10/10/08/07/robot-1725181_1280.png') right 12% bottom 12%/110px 110px no-repeat,
+                        url('https://cdn.pixabay.com/photo/2017/06/10/07/18/bank-2387082_1280.png') left 60% bottom 10%/90px 90px no-repeat,
+                        url('https://cdn.pixabay.com/photo/2017/01/31/13/14/ai-2025789_1280.png') right 60% top 60%/80px 80px no-repeat;
+            pointer-events: none;
+        }
+        #chat > * {
+            position: relative;
+            z-index: 1;
+        }
+        #chat:focus-within, #chat:hover {
+            box-shadow: 0 8px 32px 0 #00e0ff55, 0 2px 12px #00e0ff22;
+            border: 2.5px solid #00e0ff;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 14px 22px;
+            border-radius: 22px;
+            max-width: 88%;
+            word-wrap: break-word;
+            font-size: 1.22em;
+            box-shadow: 0 4px 24px #00e0ff33, 0 1.5px 8px #00e0ff11;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .sent {
+            background: linear-gradient(90deg, #00e0ff 0%, #b2fefa 100%);
+            color: #181c24;
+            align-self: flex-end;
+            text-align: right;
+            border-bottom-right-radius: 8px;
+            border-top-right-radius: 22px;
+            box-shadow: 0 0 24px #00e0ffcc, 0 2px 8px #00e0ff44;
+        }
+        .received {
+            background: linear-gradient(90deg, #fff 0%, #e3e3e3 100%);
+            color: #181c24;
+            align-self: flex-start;
+            text-align: left;
+            border-bottom-left-radius: 8px;
+            border-top-left-radius: 22px;
+            box-shadow: 0 0 24px #fff8, 0 2px 8px #00e0ff33;
+        }
+        .message-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        #message {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        button {
+            padding: 8px 18px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .recording-status {
+            margin-left: 10px;
+            font-style: italic;
+            color: #888;
+            display: flex;
+            align-items: center;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 10px;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+            .chat-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            #chat_mode {
+                width: 100%;
+                max-width: none;
+            }
+            .message-input-area {
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-title">HERMES</div>
+        <div class="nav-links">
+            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="https://github.com/jenishallur/live-chat" target="_blank">GitHub</a>
+            <a class="nav-link" href="/logout">Logout</a>
+        </div>
+    </nav>
+    <div style="height: 24px;"></div>
+    <div class="container">
+        <h2>Customer Chat</h2>
+        <div class="chat-controls">
+            <label for="chat_mode">Mode:</label>
+            <select id="chat_mode">
+                <option value="ai">AI</option>
+                <option value="agent">Agent</option>
+            </select>
+            <label for="speech_lang" style="margin-left:18px;">Speech Language:</label>
+            <select id="speech_lang">
+                <option value="en">English</option>
+                <option value="te">Telugu</option>
+                <option value="hi">Hindi</option>
+            </select>
+            <button onclick="clearChat()">Clear Chat</button>
+        </div>
+        <div id="chat"></div>
+        <div class="message-input-area">
+            <input id="message" placeholder="Type your message..." onkeydown="checkEnter(event)">
+            <button onclick="sendMessage()">Send</button>
+            <button id="recordButton" title="Record/Stop Voice">
+                <span id="recordIcon">🎤</span>
+            </button>
+            <span id="recordingStatus" class="recording-status"></span>
+        </div>
+    </div>
+    <script>
+    // --- Accessibility, TTS, and Keyboard Navigation for Customer ---
+    const socket = io();
+    const username = "{{username}}";
+    const room = "room_" + username;
+    const COLAB_URL = "https://320f6ac43b94.ngrok-free.app"; // Use your ngrok/Colab backend
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecording = false;
+    let stream = null;
+    const recordButton = document.getElementById('recordButton');
+    const recordIcon = document.getElementById('recordIcon');
+    const recordingStatus = document.getElementById('recordingStatus');
+    const messageInput = document.getElementById('message');
+    const chatBox = document.getElementById("chat");
+
+    // Accessibility: Message navigation and highlight
+    let currentMessageIndex = -1;
+    let messagesData = [];
+    let speechTimeout;
+    let highlightBox = null;
+    const SPEECH_DELAY = 1000;
+
+    // Add highlight box for message navigation
+    window.addEventListener('DOMContentLoaded', () => {
+      highlightBox = document.createElement('div');
+      highlightBox.className = 'highlight-box';
+      highlightBox.style.display = 'none';
+      chatBox.appendChild(highlightBox);
+    });
+
+    window.onload = function() {
+        socket.emit('join', {username, room});
+        requestMicrophoneAccess();
+        document.addEventListener('keydown', handleKeyboardNavigation);
+    };
+
+    async function requestMicrophoneAccess() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            recordButton.disabled = false;
+        } catch (err) {
+            recordingStatus.textContent = "Microphone access denied.";
+            recordButton.disabled = true;
+        }
+    }
+
+    recordButton.addEventListener('click', function() {
+        if (!isRecording) {
+            startRecording();
+        } else {
+            stopRecording();
+        }
+    });
+
+    function startRecording() {
+        audioChunks = [];
+        recordingStatus.textContent = "Recording...";
+        isRecording = true;
+        recordIcon.textContent = '⏹️';
+        if (!stream) {
+            requestMicrophoneAccess().then(() => actuallyStartRecording());
+        } else {
+            actuallyStartRecording();
+        }
+    }
+    function actuallyStartRecording() {
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+        };
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = () => {
+                const base64Audio = reader.result.split(',')[1];
+                recordingStatus.textContent = "Processing...";
+                // Get selected language for speech recognition
+                const speechLang = document.getElementById('speech_lang').value || 'en';
+                socket.emit('transcribe_audio', { audio: base64Audio, room: room, lang: speechLang });
+            };
+        };
+        mediaRecorder.start();
+    }
+    function stopRecording() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
+            recordIcon.textContent = '🎤';
+            recordingStatus.textContent = "";
+        }
+    }
+
+    socket.on('transcribed_text', data => {
+        messageInput.value = data.text;
+        recordingStatus.textContent = "Transcription complete.";
+        if (data.text && data.text.length > 0) {
+            speakMessage(data.text, 'en');
+        }
+    });
+
+    function sendMessage() {
+        const msgInput = document.getElementById("message");
+        const msg = msgInput.value.trim();
+        const mode = document.getElementById('chat_mode').value;
+        if (msg === "") return;
+        socket.emit('message', {username, room, message: msg, mode});
+        msgInput.value = "";
+        // Show processing indicator if in AI mode
+        if (mode === 'ai') {
+            removeAIIndicator();
+            removeProcessIndicator();
+            processIndicator = document.createElement('p');
+            processIndicator.className = 'received message';
+            processIndicator.id = 'ai-process-indicator';
+            processIndicator.innerHTML = '<em>Processing...</em>';
+            chatBox.appendChild(processIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    }
+
+    function checkEnter(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    // --- Message history and navigation ---
+    socket.on('history', msgs => {
+        chatBox.innerHTML = '';
+        if (highlightBox) chatBox.appendChild(highlightBox); // Re-append highlight box
+        messagesData = [];
+        msgs.forEach((m, index) => {
+            messagesData.push(m);
+            const cls = m.sender === username ? "sent message" : "received message";
+            const div = document.createElement('div');
+            div.className = cls;
+            div.id = `msg-${index}`;
+            div.innerHTML = m.display_text;
+            div.lang = m.message_lang;
+            chatBox.appendChild(div);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+        currentMessageIndex = -1;
+        hideHighlightBox();
+    });
+
+    // Typing/processing indicators
+    let aiIndicator = null;
+    let processIndicator = null;
+    function appendOrMoveToBottom(indicator) {
+        if (indicator && indicator.parentNode) {
+            indicator.parentNode.removeChild(indicator);
+        }
+        chatBox.appendChild(indicator);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    socket.on('ai_processing', (data) => {
+        removeProcessIndicator();
+        removeAIIndicator();
+        processIndicator = document.createElement('p');
+        processIndicator.className = 'received message';
+        processIndicator.id = 'ai-process-indicator';
+        let text = '';
+        if (data && data.process === 'translating') {
+            text = '<em>Translating...</em>';
+        } else if (data && data.process === 'summarizing') {
+            text = '<em>Summarizing...</em>';
+        } else {
+            text = '<em>Processing...</em>';
+        }
+        processIndicator.innerHTML = text;
+        appendOrMoveToBottom(processIndicator);
+    });
+    socket.on('ai_typing', (data) => {
+        removeAIIndicator();
+        removeProcessIndicator();
+        aiIndicator = document.createElement('p');
+        aiIndicator.className = 'received message';
+        aiIndicator.id = 'ai-typing-indicator';
+        aiIndicator.innerHTML = '<em>AI is replying<span class="dotdotdot">...</span></em>';
+        appendOrMoveToBottom(aiIndicator);
+    });
+    socket.on('remove_ai_typing', () => { removeAIIndicator(); });
+    socket.on('remove_ai_processing', () => { removeProcessIndicator(); });
+    function removeAIIndicator() {
+        if (aiIndicator && aiIndicator.parentNode) {
+            aiIndicator.parentNode.removeChild(aiIndicator);
+            aiIndicator = null;
+        }
+    }
+    function removeProcessIndicator() {
+        if (processIndicator && processIndicator.parentNode) {
+            processIndicator.parentNode.removeChild(processIndicator);
+            processIndicator = null;
+        }
+    }
+
+    socket.on('new_message', msg => {
+        removeAIIndicator();
+        removeProcessIndicator();
+        messagesData.push(msg);
+        const isOwn = msg.sender === username;
+        let cls = isOwn ? "sent message" : "received message";
+        const div = document.createElement('div');
+        div.className = cls;
+        div.id = `msg-${messagesData.length - 1}`;
+        div.innerHTML = msg.display_text;
+        div.lang = msg.message_lang;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    function clearChat() {
+        chatBox.innerHTML = '';
+        if (highlightBox) chatBox.appendChild(highlightBox);
+        removeAIIndicator();
+        removeProcessIndicator();
+        messagesData = [];
+        currentMessageIndex = -1;
+        hideHighlightBox();
+        socket.emit('clear_chat_history', { room: room });
+        showMessageBox("Chat history cleared.");
+    }
+
+    // --- Animate ... for typing indicator ---
+    setInterval(() => {
+        const dots = document.querySelectorAll('.dotdotdot');
+        dots.forEach(dot => {
+            if (!dot.dataset.step) dot.dataset.step = '0';
+            let step = parseInt(dot.dataset.step);
+            step = (step + 1) % 4;
+            dot.textContent = '.'.repeat(step);
+            dot.dataset.step = step;
+        });
+    }, 500);
+
+    // --- Accessibility: Keyboard Navigation & TTS ---
+    function handleKeyboardNavigation(event) {
+        if (document.activeElement === messageInput) return;
+        if (event.key === 'ArrowRight') {
+            navigateMessages('next');
+            event.preventDefault();
+        } else if (event.key === 'ArrowLeft') {
+            navigateMessages('prev');
+            event.preventDefault();
+        } else if (event.altKey && event.key.toLowerCase() === 'c') {
+            if (messagesData.length > 0) {
+                currentMessageIndex = messagesData.length - 1;
+                updateHighlightBox();
+            }
+            event.preventDefault();
+        } else if (event.altKey && event.key.toLowerCase() === 'm') {
+            if (currentMessageIndex >= 0 && currentMessageIndex < messagesData.length) {
+                const msg = messagesData[currentMessageIndex];
+                if (msg && msg.speech_text) {
+                    speakMessage(msg.speech_text, msg.message_lang || 'en');
+                }
+            } else if (messagesData.length > 0) {
+                const msg = messagesData[messagesData.length - 1];
+                if (msg && msg.speech_text) {
+                    speakMessage(msg.speech_text, msg.message_lang || 'en');
+                }
+            }
+            event.preventDefault();
+        } else if (event.altKey && event.key.toLowerCase() === 's') {
+            sendMessage();
+            event.preventDefault();
+        }
+    }
+
+    function navigateMessages(direction) {
+        stopSpeech();
+        if (messagesData.length === 0) {
+            currentMessageIndex = -1;
+            hideHighlightBox();
+            return;
+        }
+        if (direction === 'next') {
+            currentMessageIndex = Math.min(currentMessageIndex + 1, messagesData.length - 1);
+        } else if (direction === 'prev') {
+            currentMessageIndex = Math.max(currentMessageIndex - 1, 0);
+        }
+        updateHighlightBox();
+    }
+
+    function updateHighlightBox() {
+        clearTimeout(speechTimeout);
+        if (!highlightBox) return;
+        if (currentMessageIndex >= 0 && currentMessageIndex < messagesData.length) {
+            const currentMessageData = messagesData[currentMessageIndex];
+            const currentMessageElement = chatBox.querySelector(`#msg-${currentMessageIndex}`);
+            if (!currentMessageElement || !currentMessageData || !currentMessageData.speech_text) {
+                hideHighlightBox();
+                return;
+            }
+            const messageRect = currentMessageElement.getBoundingClientRect();
+            highlightBox.style.display = 'block';
+            highlightBox.style.width = `${messageRect.width}px`;
+            highlightBox.style.height = `${messageRect.height}px`;
+            highlightBox.style.top = `${currentMessageElement.offsetTop}px`;
+            highlightBox.style.left = `${currentMessageElement.offsetLeft}px`;
+            currentMessageElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            speechTimeout = setTimeout(() => {
+                const messageData = messagesData[currentMessageIndex];
+                if (messageData && messageData.speech_text) {
+                    speakMessage(messageData.speech_text, messageData.message_lang || 'en');
+                }
+            }, SPEECH_DELAY);
+        } else {
+            hideHighlightBox();
+        }
+    }
+    function hideHighlightBox() {
+        if (highlightBox) highlightBox.style.display = 'none';
+        clearTimeout(speechTimeout);
+        stopSpeech();
+    }
+
+    function speakMessage(text, lang) {
+        // Telugu fallback: If Telugu requested and not available in browser, use backend TTS
+        if (lang === 'te') {
+            let browserSupportsTelugu = false;
+            if ('speechSynthesis' in window) {
+                const voices = window.speechSynthesis.getVoices();
+                let match = voices.find(v => v.lang === 'te-IN');
+                if (!match) {
+                    match = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('te'));
+                }
+                if (match) browserSupportsTelugu = true;
+            }
+            if (!browserSupportsTelugu) {
+                stopSpeech();
+                fetch(`${COLAB_URL}/text-to-speech`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, lang: 'te' })
+                })
+                .then(async response => {
+                    if (!response.ok) throw new Error('TTS backend error');
+                    const blob = await response.blob();
+                    const audioUrl = URL.createObjectURL(blob);
+                    const audio = new Audio(audioUrl);
+                    audio.onended = () => { URL.revokeObjectURL(audioUrl); };
+                    audio.onerror = () => { alert('Could not play Telugu speech audio.'); };
+                    audio.play();
+                })
+                .catch(err => {
+                    alert('Telugu speech is not supported in your browser, and the backend TTS is unavailable.');
+                });
+                return;
+            }
+        }
+        if ('speechSynthesis' in window) {
+            stopSpeech();
+            const utterance = new SpeechSynthesisUtterance(text);
+            let targetLang = 'en-US';
+            if (lang === 'hi') targetLang = 'hi-IN';
+            else if (lang === 'te') targetLang = 'te-IN';
+            utterance.lang = targetLang;
+            const voices = window.speechSynthesis.getVoices();
+            let match = voices.find(v => v.lang === targetLang);
+            if (!match && lang === 'te') {
+                match = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('te'));
+            }
+            if (!match && lang === 'hi') {
+                match = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('hi'));
+            }
+            if (match) {
+                utterance.voice = match;
+                window.speechSynthesis.speak(utterance);
+            } else if (lang === 'te') {
+                setTimeout(() => { alert('Telugu speech is not supported in your browser. Using server TTS.'); }, 100);
+                fetch(COLAB_URL + '/text-to-speech', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, lang: 'te' })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('TTS server error');
+                    return response.blob();
+                })
+                .then(blob => {
+                    const audioUrl = URL.createObjectURL(blob);
+                    const audio = new Audio(audioUrl);
+                    audio.play().catch(err => {});
+                })
+                .catch(err => {
+                    alert('Telugu speech is not available (backend error).');
+                });
+            } else if (lang === 'hi') {
+                utterance.lang = 'en-US';
+                utterance.voice = voices.find(v => v.lang === 'en-US') || null;
+                setTimeout(() => { alert('Hindi speech is not supported in your browser. Reading in English.'); }, 100);
+                window.speechSynthesis.speak(utterance);
+            } else {
+                window.speechSynthesis.speak(utterance);
+            }
+        } else {
+            if (lang === 'te') {
+                fetch(COLAB_URL + '/text-to-speech', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, lang: 'te' })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('TTS server error');
+                    return response.blob();
+                })
+                .then(blob => {
+                    const audioUrl = URL.createObjectURL(blob);
+                    const audio = new Audio(audioUrl);
+                    audio.play().catch(err => {});
+                })
+                .catch(err => {
+                    alert('Telugu speech is not available (backend error).');
+                });
+            }
+        }
+    }
+    function stopSpeech() {
+        if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    // --- Custom message box for alerts ---
+    function showMessageBox(message) {
+        const modal = document.createElement('div');
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.zIndex = '1000';
+        const modalContent = document.createElement('div');
+        modalContent.style.backgroundColor = '#fff';
+        modalContent.style.padding = '25px';
+        modalContent.style.borderRadius = '10px';
+        modalContent.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+        modalContent.style.textAlign = 'center';
+        modalContent.style.maxWidth = '400px';
+        modalContent.style.width = '90%';
+        const messageText = document.createElement('p');
+        messageText.innerText = message;
+        messageText.style.marginBottom = '20px';
+        messageText.style.fontSize = '1.1em';
+        messageText.style.color = '#333';
+        const okButton = document.createElement('button');
+        okButton.innerText = 'OK';
+        okButton.style.padding = '10px 20px';
+        okButton.style.backgroundColor = '#007bff';
+        okButton.style.color = 'white';
+        okButton.style.border = 'none';
+        okButton.style.borderRadius = '5px';
+        okButton.style.cursor = 'pointer';
+        okButton.style.fontSize = '1em';
+        okButton.addEventListener('click', () => { document.body.removeChild(modal); });
+        modalContent.appendChild(messageText);
+        modalContent.appendChild(okButton);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+    }
+    </script>
+<footer style="margin-top:40px;text-align:center;color:#888;font-size:1em;">Powered by travis g424</footer>
+</body>
+</html>

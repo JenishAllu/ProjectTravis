@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Banking Chat Assistance - Register</title>
+  <style>
+    :root {
+        --primary-color: #00e0ff;
+        --secondary-color: #232a34;
+        --accent-color: #00e0ff;
+        --background-color-light: #181c24;
+        --background-color-dark: #232a34;
+        --card-background: #232a34;
+        --text-color: #fff;
+        --heading-color: #00e0ff;
+        --glow-color-primary: #00e0ff;
+        --glow-color-secondary: #b2fefa;
+        --glow-strength: 0 0 16px #00e0ff99;
+        --glow-strength-strong: 0 0 32px #00e0ffcc;
+    }
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #181c24 60%, #232a34 100%);
+        margin: 0;
+        padding: 0;
+    }
+    .navbar {
+        width: 100vw;
+        height: 60px;
+        background: linear-gradient(90deg, #181c24 60%, #232a34 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        box-sizing: border-box;
+        box-shadow: 0 2px 16px 0 #00e0ff55;
+        position: fixed;
+        top: 0; left: 0; z-index: 100;
+        animation: navFadeIn 1.2s cubic-bezier(.4,1.4,.6,1) 0.1s both;
+        backdrop-filter: blur(6px);
+    }
+    @keyframes navFadeIn {
+        from { opacity: 0; transform: translateY(-40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .nav-title {
+        font-size: 2em;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: #00e0ff;
+        text-shadow: 0 0 16px #00e0ff99, 0 0 4px #fff2;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: fadeInLeft 1.2s cubic-bezier(.4,1.4,.6,1) 0.2s both;
+    }
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+    }
+    .nav-link {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.1em;
+        font-weight: 500;
+        padding: 8px 18px;
+        border-radius: 8px;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: 0 0 8px 2px #00e0ff44;
+    }
+    .nav-link:hover {
+        background: #232a34;
+        color: #00e0ff;
+        box-shadow: 0 0 16px 2px #00e0ff99;
+    }
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    .register-container {
+        background-color: var(--card-background);
+        border-radius: 15px;
+        box-shadow: 0 8px 40px #00e0ff55, 0 2px 12px #000a;
+        padding: 45px;
+        width: 100%;
+        max-width: 480px;
+        text-align: center;
+        transition: box-shadow 0.4s ease-in-out, transform 0.3s ease-out;
+        animation: fadeIn 1s ease-out;
+        margin: 0 auto;
+        margin-top: 100px;
+        color: #fff;
+        position: relative;
+    }
+    .register-container:hover {
+        box-shadow: 0 12px 25px #00e0ff88, var(--glow-strength-strong);
+        transform: translateY(-5px);
+    }
+    h2 {
+        color: #00e0ff;
+        margin-bottom: 25px;
+        text-shadow: 0 0 18px #00e0ff99, 0 0 4px #fff2;
+    }
+    /* ...existing code... */
+
+    h1 {
+        color: var(--heading-color);
+        font-size: 3em;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        animation: fadeInDown 1s ease-out;
+    }
+
+    .register-container {
+      background-color: var(--card-background);
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), var(--glow-strength);
+      padding: 45px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      transition: box-shadow 0.4s ease-in-out, transform 0.3s ease-out;
+      animation: fadeIn 1s ease-out;
+    }
+    .register-container:hover {
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2), var(--glow-strength-strong);
+        transform: translateY(-5px);
+    }
+    h2 {
+      color: var(--text-color);
+      margin-bottom: 25px;
+      font-size: 1.8em; /* Slightly smaller as h1 is now main title */
+    }
+    p {
+      color: red;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    input[type="text"],
+    input[type="password"],
+    select {
+      padding: 14px 18px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 1.05em;
+      width: calc(100% - 36px); /* Adjust for padding */
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 0 12px rgba(74, 144, 226, 0.7); /* Primary color glow */
+    }
+    .radio-group {
+      display: flex;
+      gap: 25px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    .radio-group label {
+      font-size: 1em;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .radio-group input[type="radio"] {
+      margin-right: 8px;
+      transform: scale(1.1);
+      cursor: pointer;
+      accent-color: var(--primary-color); /* Highlight radio button */
+    }
+    label[for="language"] {
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: -5px;
+        align-self: flex-start;
+    }
+    button {
+      padding: 14px 30px;
+      background: linear-gradient(90deg, var(--primary-color), #3A7BD5); /* Gradient for depth */
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.15em;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      width: auto;
+      align-self: center;
+      margin-top: 15px;
+      box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #3A7BD5, var(--primary-color));
+      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.5), var(--glow-strength-strong);
+      transform: translateY(-3px);
+    }
+    button:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+    }
+    button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 300%;
+        height: 300%;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+        transition: all 0.75s ease-out;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+    button:hover::before {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    .login-link {
+      margin-top: 30px;
+      font-size: 1em;
+      color: var(--text-color);
+    }
+    .login-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+      color: #3A7BD5;
+    }
+    .branding-footer {
+        font-size: 0.8em;
+        color: var(--secondary-color);
+        margin-top: 40px;
+        text-align: center;
+        width: 100%;
+    }
+
+    /* Keyframe Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+        .register-container {
+            padding: 30px;
+            margin: 10px;
+        }
+        h2 {
+            font-size: 1.6em;
+        }
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: calc(100% - 28px);
+            padding: 12px;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 1.05em;
+        }
+        .radio-group {
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .register-link {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .branding-footer {
+            margin-top: 30px;
+        }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar" style="width:100vw;height:60px;background:linear-gradient(90deg,#181c24 60%,#232a34 100%);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 40px;box-sizing:border-box;box-shadow:0 2px 16px 0 #00e0ff55;position:fixed;top:0;left:0;z-index:100;animation:navFadeIn 1.2s cubic-bezier(.4,1.4,.6,1) 0.1s both;backdrop-filter:blur(6px);">
+    <div class="nav-title" style="font-size:2em;font-weight:700;letter-spacing:0.04em;color:#00e0ff;text-shadow:0 0 16px #00e0ff99,0 0 4px #fff2;display:flex;align-items:center;gap:12px;animation:fadeInLeft 1.2s cubic-bezier(.4,1.4,.6,1) 0.2s both;">HERMES</div>
+    <div class="nav-links" style="display:flex;gap:32px;align-items:center;">
+      <a class="nav-link" href="/about" style="color:#fff;text-decoration:none;font-size:1.1em;font-weight:500;padding:8px 18px;border-radius:8px;transition:background 0.2s,color 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 8px 2px #00e0ff44;">About</a>
+      <a class="nav-link" href="https://github.com/jenishallur/live-chat" target="_blank" style="color:#fff;text-decoration:none;font-size:1.1em;font-weight:500;padding:8px 18px;border-radius:8px;transition:background 0.2s,color 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 8px 2px #00e0ff44;">GitHub</a>
+    </div>
+  </nav>
+  <div style="height: 80px;"></div>
+  <div class="register-container">
+    <h2>Register</h2>
+    {% if message %}
+      <p>{{ message }}</p>
+    {% endif %}
+    <form method="POST">
+      <input name="username" type="text" placeholder="Username" required>
+      <input name="password" type="password" placeholder="Password" required>
+      <div class="radio-group">
+        <label>
+          <input type="radio" name="role" value="customer" checked> Customer
+        </label>
+        <label>
+          <input type="radio" name="role" value="agent"> Agent
+        </label>
+      </div>
+      <label for="language">Select Language:</label>
+      <select name="language" id="language">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="te">Telugu</option>
+      </select>
+      <button type="submit">Register</button>
+    </form>
+    <div class="login-link">
+      Already have an account? <a href="/login">Login here</a>
+    </div>
+  </div>
+  <footer style="margin-top:40px;text-align:center;color:#888;font-size:1em;">Powered by travis g424</footer>
+</body>
+</html>
