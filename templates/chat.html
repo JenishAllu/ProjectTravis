@@ -423,7 +423,7 @@
     <div style="display:flex;align-items:center;gap:18px;">
       <span style="font-weight:700;font-size:1.3em;color:#88ddff;text-shadow:0 0 8px #4A90E2;letter-spacing:1px;">HERMES</span>
       <a href="#" id="about-link" style="color:#fff;font-weight:500;padding:6px 14px;border-radius:6px;text-decoration:none;transition:background 0.2s;box-shadow:0 0 8px #4A90E2AA;">About</a>
-      <a href="https://github.com/jenishallur/live-chat-flask-socketio" target="_blank" style="color:#fff;font-weight:500;padding:6px 14px;border-radius:6px;text-decoration:none;transition:background 0.2s;">GitHub</a>
+      <a href="https://github.com/JenishAllu/ProjectTravis" target="_blank" style="color:#fff;font-weight:500;padding:6px 14px;border-radius:6px;text-decoration:none;transition:background 0.2s;">GitHub</a>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
       <span style="font-weight:600;font-size:1.1em;color:#fff;">Agent: {{username}}</span>
@@ -439,7 +439,7 @@
       <p style="color:#222;font-size:1.08em;">This is a modern, accessible live chat system for customer support, built with Flask, Socket.IO, and a focus on real-time feedback and accessibility for all agents.</p>
       <h3 style="margin-bottom:6px;color:#2c3e50;font-size:1.1em;">Keyboard Shortcuts</h3>
       <ul style="font-size:1em;color:#333;line-height:1.7;margin:0 0 10px 0;padding-left:18px;">
-        <li><b>Alt + Space</b>: Hold to record (mic on while holding)</li>
+        <li><b>Ctrl + Shift + Space</b>: Hold to record (mic on while holding)</li>
         <li><b>Alt + S</b>: Send message</li>
         <li><b>Alt + L</b>: Read customer list</li>
         <li><b>Alt + C</b>: Read chat from bottom</li>
@@ -516,7 +516,7 @@
     const username = "{{username}}";
     let currentRoom = "";
     let currentCustomer = "";
-    const COLAB_URL = "https://320f6ac43b94.ngrok-free.app"; // Updated ngrok URL
+    const COLAB_URL = "https://9fe110d854d2.ngrok-free.app"; // Updated ngrok URL
 
     let mediaRecorder;
     let audioChunks = [];
@@ -639,14 +639,14 @@
         e.preventDefault();
         return;
       }
-      // Ctrl+Space: Start recording
-      if (e.ctrlKey && e.code === 'Space' && !isRecording) {
+      // Ctrl+Shift+Space: Start recording
+      if (e.ctrlKey && e.shiftKey && e.code === 'Space' && !isRecording) {
         startRecordingInternal();
         e.preventDefault();
         return;
       }
-      // Space (no modifiers): Stop recording if recording
-      if (!e.ctrlKey && !e.altKey && !e.shiftKey && e.code === 'Space' && isRecording) {
+      // Ctrl+Shift+Space: Stop recording if recording
+      if (e.ctrlKey && e.shiftKey && e.code === 'Space' && isRecording) {
         stopRecordingInternal();
         e.preventDefault();
         return;

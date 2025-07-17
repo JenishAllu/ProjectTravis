@@ -263,11 +263,11 @@
         <div class="nav-title">HERMES</div>
         <div class="nav-links">
             <a class="nav-link" href="/about">About</a>
-            <a class="nav-link" href="https://github.com/jenishallur/live-chat" target="_blank">GitHub</a>
+            <a class="nav-link" href="https://github.com/JenishAllu/ProjectTravis" target="_blank">GitHub</a>
             <a class="nav-link" href="/logout">Logout</a>
         </div>
     </nav>
-    <div style="height: 24px;"></div>
+    <div style="height: 50px;"></div>
     <div class="container">
         <h2>Customer Chat</h2>
         <div class="chat-controls">
@@ -284,6 +284,16 @@
             </select>
             <button onclick="clearChat()">Clear Chat</button>
         </div>
+        <details style="margin-bottom:10px;font-size:1em;color:#00e0ff;">
+            <summary style="cursor:pointer;font-weight:bold;">Keyboard Shortcuts</summary>
+            <ul style="margin:8px 0 0 18px;padding:0 0 0 0.5em;font-size:1em;line-height:1.7;">
+                <li><b>Ctrl + Shift + Space</b>: Hold to record/stop voice message</li>
+                <li><b>Alt + S</b>: Send message</li>
+                <li><b>Alt + C</b>: Read chat from bottom</li>
+                <li><b>Alt + M</b>: Read current message</li>
+                <li><b>Left/Right Arrow</b>: Navigate chat messages</li>
+            </ul>
+        </details>
         <div id="chat"></div>
         <div class="message-input-area">
             <input id="message" placeholder="Type your message..." onkeydown="checkEnter(event)">
@@ -299,7 +309,7 @@
     const socket = io();
     const username = "{{username}}";
     const room = "room_" + username;
-    const COLAB_URL = "https://320f6ac43b94.ngrok-free.app"; // Use your ngrok/Colab backend
+    const COLAB_URL = "https://9fe110d854d2.ngrok-free.app"; // Use your ngrok/Colab backend
     let mediaRecorder;
     let audioChunks = [];
     let isRecording = false;
@@ -315,7 +325,7 @@
     let messagesData = [];
     let speechTimeout;
     let highlightBox = null;
-    const SPEECH_DELAY = 1000;
+    const SPEECH_DELAY = 500; // Delay before speaking the message (in ms)
 
     // Add highlight box for message navigation
     window.addEventListener('DOMContentLoaded', () => {
@@ -535,6 +545,17 @@
     // --- Accessibility: Keyboard Navigation & TTS ---
     function handleKeyboardNavigation(event) {
         if (document.activeElement === messageInput) return;
+        // Ctrl+Shift+Space: Start/stop recording
+        if (event.ctrlKey && event.shiftKey && event.code === 'Space' && !isRecording) {
+            startRecording();
+            event.preventDefault();
+            return;
+        }
+        if (event.ctrlKey && event.shiftKey && event.code === 'Space' && isRecording) {
+            stopRecording();
+            event.preventDefault();
+            return;
+        }
         if (event.key === 'ArrowRight') {
             navigateMessages('next');
             event.preventDefault();

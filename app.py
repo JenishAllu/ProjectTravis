@@ -19,7 +19,7 @@ app.logger.setLevel(logging.WARNING) # Set to WARNING for production, INFO for d
 
 # MongoDB setup
 try:
-    client = MongoClient("mongodb+srv://travis1444:travis123@cluster1.nykrkvq.mongodb.net/?retryWrites=true&w=majority")
+    client = MongoClient("mongodb+srv://<username>:<db_password>cluster1.nykrkvq.mongodb.net/?retryWrites=true&w=majority")# Replace <username> and <db_password> with your actual username and password
     db = client["chat_db"]
     messages = db["messages"]
     dba = client["travis_db"]
@@ -38,7 +38,7 @@ online_customers = set()
 # This URL will change every time you restart ngrok in Colab.
 
 # Updated ngrok URL as per user's request
-COLAB_URL = "https://320f6ac43b94.ngrok-free.app"
+COLAB_URL = "https://9fe110d854d2.ngrok-free.app"
 
 # Add route for About page
 @app.route('/about')
@@ -488,4 +488,5 @@ def handle_clear_chat_history(data):
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
+
 
